@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Cito Apotek Price Card</title>
+
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+
+<style>
+
+*{box-sizing:border-box;}
+
+body{
+font-family:Segoe UI,Arial,sans-serif;
+background:#ececec;
+padding:20px;
+margin:0;
+}
+
+.panel{
+background:#fff;
+padding:18px;
+border-radius:18px;
+max-width:430px;
+box-shadow:0 6px 20px rgba(0,0,0,.12);
+margin-bottom:20px;
+}
+
+.header{
+background:linear-gradient(90deg,#08b245,#009133);
+color:#fff;
+padding:16px;
+border-radius:14px;
+font-size:20px;
+font-weight:900;
+margin-bottom:18px;
+}
+
+label{
+font-weight:700;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:5px 0 12px;
+border-radius:12px;
+border:1px solid #d9d9d9;
+font-size:15px;
+}
+
+button{
+padding:12px 18px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-weight:800;
+color:#fff;
+margin-right:8px;
+}
+
+.generate{
+background:#08b245;
+}
+
+.print{
+background:#1565ff;
+}
+
+/* CARD */
+
+.card{
+
+width:9cm;
+height:6cm;
+
+background:#fff;
+
+border:3px solid #ff8200;
+
+border-radius:16px;
+
+padding:3mm 4mm;
+
+overflow:hidden;
+
+box-shadow:0 8px 20px rgba(0,0,0,.15);
+
+}
+
+/* TOP */
+
+.top{
+
+display:flex;
+
+align-items:center;
+
+gap:8px;
+
+margin-bottom:1mm;
+
+}
+
+.logo{
+
+width:.9cm;
+height:.9cm;
+
+object-fit:contain;
+
+flex-shrink:0;
+
+}
+
+.nama{
+
+font-size:17px;
+
+font-weight:900;
+
+line-height:1;
+
+overflow:hidden;
+
+}
+
+/* PRICE */
+
+.sebelum{
+
+font-size:10px;
+
+color:#555;
+
+text-align:center;
+
+margin-top:-1px;
+
+}
+
+.sesudah{
+
+font-size:28px;
+
+font-weight:900;
+
+color:#ff7a00;
+
+line-height:.95;
+
+text-align:center;
+
+margin:0;
+
+}
+
+.ppn{
+
+font-size:8px;
+
+color:#666;
+
+text-align:center;
+
+margin-top:-1px;
+
+}
+
+/* BARCODE */
+
+.barcode{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+height:2.7cm;
+
+margin-top:1mm;
+
+overflow:hidden;
+
+}
+
+#barcode{
+
+max-width:100%;
+
+}
+
+/* PRINT */
+
+@media print{
+
+html,body{
+
+width:9cm;
+height:6cm;
+
+margin:0;
+padding:0;
+
+background:#fff;
+
+}
+
+.panel{
+display:none;
+}
+
+.card{
+
+width:9cm;
+height:6cm;
+
+margin:0;
+
+border:none;
+
+border-radius:0;
+
+box-shadow:none;
+
+}
+
+}
+
+@page{
+size:9cm 6cm;
+margin:0;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="panel">
+
+<div class="header">
+CITO APOTEK SUPUTAN
+</div>
+
+<label>Nama Barang</label>
+<input id="nama">
+
+<label>Harga Sebelum PPN</label>
+<input id="harga" type="number">
+
+<label>SKU</label>
+<input id="sku">
+
+<button class="generate" onclick="buatCard()">
+GENERATE
+</button>
+
+<button class="print" onclick="window.print()">
+PRINT 9×6
+</button>
+
+</div>
+
+<div class="card">
+
+<div class="top">
+
+<img src="logo.png" class="logo">
+
+<div class="nama" id="outNama">
+Paracetamol 500mg
+</div>
+
+</div>
+
+<div class="sebelum" id="outSebelum">
+Harga Sebelum PPN : Rp10.000
+</div>
+
+<div class="sesudah" id="outSesudah">
+Rp11.100
+</div>
+
+<div class="ppn">
+(Sudah termasuk PPN 11%)
+</div>
+
+<div class="barcode">
+
+<svg id="barcode"></svg>
+
+</div>
+
+</div>
+
+<script>
+
+function rp(x){
+return x.toLocaleString('id-ID');
+}
+
+function buatCard(){
+
+let nama=
+document.getElementById('nama').value;
+
+let harga=
+parseFloat(
+document.getElementById('harga').value
+)||0;
+
+let sku=
+document.getElementById('sku').value;
+
+let total=
+Math.round(harga*1.11);
+
+document.getElementById(
+'outNama'
+).innerText=
+nama||"Nama Barang";
+
+document.getElementById(
+'outSebelum'
+).innerText=
+"Harga Sebelum PPN : Rp "+rp(harga);
+
+document.getElementById(
+'outSesudah'
+).innerText=
+"Rp"+rp(total);
+
+JsBarcode(
+"#barcode",
+sku||"EMPTY",
+{
+
+format:"CODE128",
+
+width:1.85,
+
+height:42,
+
+displayValue:true,
+
+fontSize:13,
+
+textMargin:2,
+
+margin:0,
+
+lineColor:"#000"
+
+}
+
+);
+
+}
+
+buatCard();
+
+</script>
+
+</body>
+</html>
