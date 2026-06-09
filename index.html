@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Cito Apotek Batch Label</title>
+<title>Cito Apotek Batch Label Thermal</title>
 
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
@@ -15,34 +15,30 @@ box-sizing:border-box;
 }
 
 body{
-font-family:Segoe UI,Arial,sans-serif;
-background:#f2f2f2;
+font-family:Arial,sans-serif;
+background:#f5f5f5;
 margin:20px;
 }
 
 .panel{
 
-background:#fff;
+background:white;
 
 padding:20px;
 
-border-radius:15px;
+border-radius:12px;
 
-box-shadow:0 3px 12px rgba(0,0,0,.1);
+box-shadow:0 2px 10px rgba(0,0,0,.1);
 
 margin-bottom:20px;
 
-}
-
-h2{
-margin-top:0;
 }
 
 textarea{
 
 width:100%;
 
-height:220px;
+height:250px;
 
 padding:12px;
 
@@ -50,37 +46,23 @@ font-family:Consolas,monospace;
 
 font-size:14px;
 
-border-radius:10px;
-
-border:1px solid #ccc;
-
-}
-
-.info{
-
-margin-top:10px;
-
-font-weight:bold;
-
-color:#0aa53f;
-
 }
 
 button{
 
-padding:12px 18px;
+padding:12px 20px;
 
 border:none;
 
-border-radius:10px;
+border-radius:8px;
 
 cursor:pointer;
 
 font-weight:bold;
 
-margin-top:10px;
-
 margin-right:10px;
+
+margin-top:10px;
 
 }
 
@@ -95,19 +77,27 @@ color:white;
 }
 
 .clear{
-background:#888;
+background:#777;
 color:white;
+}
+
+.info{
+
+margin-top:10px;
+
+font-weight:bold;
+
+color:#0aa53f;
+
 }
 
 /* LABEL AREA */
 
 .labels{
 
-display:flex;
+width:58mm;
 
-flex-wrap:wrap;
-
-gap:4px;
+margin:auto;
 
 }
 
@@ -116,27 +106,24 @@ gap:4px;
 .label{
 
 width:58mm;
-height:39mm;
-
-background:white;
-
-border:1px solid #ddd;
 
 padding:2mm;
 
-overflow:hidden;
+border-bottom:1px dashed #ccc;
 
-page-break-inside:avoid;
+background:white;
+
+overflow:hidden;
 
 }
 
-/* HEADER */
+/* TOP */
 
 .top{
 
 display:flex;
 
-align-items:flex-start;
+align-items:center;
 
 gap:4px;
 
@@ -157,19 +144,11 @@ flex-shrink:0;
 
 font-size:9pt;
 
-font-weight:900;
+font-weight:bold;
 
-line-height:1.05;
+line-height:1.1;
 
-height:9mm;
-
-overflow:hidden;
-
-display:-webkit-box;
-
--webkit-line-clamp:2;
-
--webkit-box-orient:vertical;
+word-break:break-word;
 
 }
 
@@ -179,9 +158,9 @@ display:-webkit-box;
 
 font-size:6pt;
 
-text-align:center;
-
 color:#666;
+
+text-align:center;
 
 margin-top:1mm;
 
@@ -189,15 +168,15 @@ margin-top:1mm;
 
 .sesudah{
 
-font-size:15pt;
+font-size:16pt;
 
 font-weight:900;
 
-text-align:center;
-
-color:#ff7a00;
+color:#000;
 
 line-height:1;
+
+text-align:center;
 
 margin-top:1mm;
 
@@ -211,18 +190,14 @@ display:flex;
 
 justify-content:center;
 
-align-items:center;
-
-height:14mm;
-
-margin-top:1mm;
-
-overflow:hidden;
+margin-top:2mm;
 
 }
 
 .barcode svg{
+
 max-width:100%;
+
 }
 
 /* PRINT */
@@ -240,27 +215,29 @@ display:none;
 }
 
 .labels{
-display:block;
+
+width:58mm;
+
 }
 
 .label{
 
 width:58mm;
-height:39mm;
-
-margin:0;
 
 border:none;
 
-page-break-after:always;
+page-break-inside:avoid;
 
 }
 
 }
 
 @page{
-size:58mm 39mm;
+
+size:58mm auto;
+
 margin:0;
+
 }
 
 </style>
@@ -270,49 +247,88 @@ margin:0;
 
 <div class="panel">
 
-<h2>Cito Apotek - Batch Price Card</h2>
+<h2>Cito Apotek Thermal Label</h2>
 
 <p>
+
 Format:
-<br>
+
+<br><br>
+
 Nama Barang;Harga Sebelum PPN;SKU
+
 </p>
 
-<textarea id="data"></textarea>
+<textarea id="data">
 
-<div class="info" id="counter">
-Total Label : 0
-</div>
+PARACETAMOL 500MG;10000;PAR500001
+AMOXICILLIN 500MG;25000;AMX500001
 
-<button class="generate" onclick="generateLabels()">
+</textarea>
+
+<br>
+
+<button
+class="generate"
+onclick="generateLabels()">
+
 GENERATE
+
 </button>
 
-<button class="print" onclick="window.print()">
+<button
+class="print"
+onclick="window.print()">
+
 PRINT
+
 </button>
 
-<button class="clear" onclick="clearData()">
+<button
+class="clear"
+onclick="clearData()">
+
 CLEAR
+
 </button>
+
+<div
+class="info"
+id="counter">
+
+Total Label : 0
 
 </div>
 
-<div class="labels" id="labels"></div>
+</div>
+
+<div
+class="labels"
+id="labels">
+
+</div>
 
 <script>
 
 function rupiah(x){
+
 return x.toLocaleString('id-ID');
+
 }
 
 function clearData(){
 
-document.getElementById('data').value='';
+document.getElementById(
+'data'
+).value='';
 
-document.getElementById('labels').innerHTML='';
+document.getElementById(
+'labels'
+).innerHTML='';
 
-document.getElementById('counter').innerText=
+document.getElementById(
+'counter'
+).innerText=
 'Total Label : 0';
 
 }
@@ -320,20 +336,18 @@ document.getElementById('counter').innerText=
 function generateLabels(){
 
 const data=
-document.getElementById('data')
-.value
-.trim();
+document.getElementById(
+'data'
+).value.trim();
 
-if(!data){
-return;
-}
+if(!data)return;
 
 const rows=
 data.split('\n');
 
 let html='';
 
-let totalLabel=0;
+let total=0;
 
 rows.forEach((row,index)=>{
 
@@ -360,7 +374,9 @@ col[2].trim();
 if(!sku) return;
 
 const hargaPPN=
-Math.round(harga*1.11);
+Math.round(
+harga*1.11
+);
 
 html+=`
 
@@ -368,31 +384,42 @@ html+=`
 
 <div class="top">
 
-<img src="logo.png" class="logo">
+<img
+src="logo.png"
+class="logo">
 
 <div class="nama">
+
 ${nama}
+
 </div>
 
 </div>
 
 <div class="sebelum">
-Harga Sebelum PPN : Rp ${rupiah(harga)}
+
+Harga Sebelum PPN
+Rp ${rupiah(harga)}
+
 </div>
 
 <div class="sesudah">
+
 Rp ${rupiah(hargaPPN)}
+
 </div>
 
 <div class="barcode">
+
 <svg id="bc${index}"></svg>
+
 </div>
 
 </div>
 
 `;
 
-totalLabel++;
+total++;
 
 });
 
@@ -403,7 +430,7 @@ document.getElementById(
 document.getElementById(
 'counter'
 ).innerText=
-'Total Label : ' + totalLabel;
+'Total Label : '+total;
 
 rows.forEach((row,index)=>{
 
@@ -421,27 +448,30 @@ JsBarcode(
 `#bc${index}`,
 sku,
 {
+
 format:"CODE128",
 
 width:1.3,
 
-height:28,
+height:30,
 
 displayValue:true,
 
-fontSize:8,
-
-textMargin:1,
+fontSize:10,
 
 margin:0,
 
-lineColor:"#000"
+textMargin:2
+
 }
+
 );
 
 });
 
 }
+
+generateLabels();
 
 </script>
 
