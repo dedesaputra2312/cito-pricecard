@@ -2,93 +2,111 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Cito Apotek Price Card</title>
+
+<title>Cito Apotek Batch Price Card</title>
 
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
 <style>
 
-*{box-sizing:border-box;}
+*{
+box-sizing:border-box;
+}
 
 body{
-font-family:Segoe UI,Arial,sans-serif;
-background:#ececec;
-padding:20px;
-margin:0;
+font-family:Arial,sans-serif;
+margin:20px;
+background:#f5f5f5;
 }
 
 .panel{
-background:#fff;
-padding:18px;
-border-radius:18px;
-max-width:430px;
-box-shadow:0 6px 20px rgba(0,0,0,.12);
+
+background:white;
+
+padding:20px;
+
+border-radius:15px;
+
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+
 margin-bottom:20px;
+
 }
 
-.header{
-background:linear-gradient(90deg,#08b245,#009133);
-color:#fff;
-padding:16px;
-border-radius:14px;
-font-size:20px;
-font-weight:900;
-margin-bottom:18px;
-}
+textarea{
 
-label{
-font-weight:700;
-}
-
-input{
 width:100%;
+
+height:250px;
+
 padding:12px;
-margin:5px 0 12px;
-border-radius:12px;
-border:1px solid #d9d9d9;
-font-size:15px;
+
+font-family:Consolas,monospace;
+
 }
 
 button{
-padding:12px 18px;
+
+padding:12px 20px;
+
 border:none;
-border-radius:12px;
+
 cursor:pointer;
-font-weight:800;
-color:#fff;
-margin-right:8px;
+
+font-weight:bold;
+
+border-radius:8px;
+
+margin-top:10px;
+
+margin-right:10px;
+
 }
 
 .generate{
-background:#08b245;
+
+background:#0aa53f;
+
+color:white;
+
 }
 
 .print{
+
 background:#1565ff;
+
+color:white;
+
 }
 
-/* CARD */
+/* LABEL */
 
-.card{
+.labels{
 
-width:9cm;
-height:6cm;
+display:flex;
 
-background:#fff;
+flex-wrap:wrap;
 
-border:3px solid #ff8200;
+gap:0;
 
-border-radius:16px;
+}
 
-padding:3mm 4mm;
+.label{
+
+width:58mm;
+height:39mm;
+
+border:1px solid #ddd;
+
+background:white;
+
+padding:2mm;
 
 overflow:hidden;
 
-box-shadow:0 8px 20px rgba(0,0,0,.15);
+page-break-inside:avoid;
 
 }
-
-/* TOP */
 
 .top{
 
@@ -96,16 +114,14 @@ display:flex;
 
 align-items:center;
 
-gap:8px;
-
-margin-bottom:1mm;
+gap:4px;
 
 }
 
 .logo{
 
-width:.9cm;
-height:.9cm;
+width:7mm;
+height:7mm;
 
 object-fit:contain;
 
@@ -115,61 +131,49 @@ flex-shrink:0;
 
 .nama{
 
-font-size:17px;
+font-size:9pt;
 
-font-weight:900;
+font-weight:bold;
 
 line-height:1;
+
+height:8mm;
 
 overflow:hidden;
 
 }
 
-/* PRICE */
-
 .sebelum{
 
-font-size:10px;
+font-size:6pt;
 
 color:#555;
 
-text-align:center;
+margin-top:1mm;
 
-margin-top:-1px;
+text-align:center;
 
 }
 
 .sesudah{
 
-font-size:28px;
+font-size:16pt;
 
 font-weight:900;
 
 color:#ff7a00;
 
-line-height:.95;
+line-height:1;
 
 text-align:center;
 
-margin:0;
+margin-top:1mm;
 
 }
-
-.ppn{
-
-font-size:8px;
-
-color:#666;
-
-text-align:center;
-
-margin-top:-1px;
-
-}
-
-/* BARCODE */
 
 .barcode{
+
+height:13mm;
 
 display:flex;
 
@@ -177,60 +181,55 @@ justify-content:center;
 
 align-items:center;
 
-height:2.7cm;
+overflow:hidden;
 
 margin-top:1mm;
 
-overflow:hidden;
-
 }
 
-#barcode{
+.barcode svg{
 
 max-width:100%;
 
 }
 
-/* PRINT */
-
 @media print{
 
-html,body{
-
-width:9cm;
-height:6cm;
-
+body{
 margin:0;
 padding:0;
-
-background:#fff;
-
+background:white;
 }
 
 .panel{
 display:none;
 }
 
-.card{
+.labels{
+display:block;
+}
 
-width:9cm;
-height:6cm;
+.label{
+
+width:58mm;
+height:39mm;
 
 margin:0;
 
 border:none;
 
-border-radius:0;
-
-box-shadow:none;
+page-break-after:always;
 
 }
 
 }
 
 @page{
-size:9cm 6cm;
+
+size:58mm 39mm;
+
 margin:0;
+
 }
 
 </style>
@@ -240,126 +239,168 @@ margin:0;
 
 <div class="panel">
 
-<div class="header">
-CITO APOTEK SUPUTAN
-</div>
+<h2>Cito Apotek - Batch Label</h2>
 
-<label>Nama Barang</label>
-<input id="nama">
+<p>
+Paste dari Excel:
+<br>
+Nama Barang | Harga Sebelum PPN | SKU
+</p>
 
-<label>Harga Sebelum PPN</label>
-<input id="harga" type="number">
+<textarea id="data"></textarea>
 
-<label>SKU</label>
-<input id="sku">
+<br>
 
-<button class="generate" onclick="buatCard()">
-GENERATE
+<button
+class="generate"
+onclick="generateLabels()">
+
+GENERATE LABEL
+
 </button>
 
-<button class="print" onclick="window.print()">
-PRINT 9×6
+<button
+class="print"
+onclick="window.print()">
+
+PRINT
+
 </button>
 
 </div>
 
-<div class="card">
-
-<div class="top">
-
-<img src="logo.png" class="logo">
-
-<div class="nama" id="outNama">
-Paracetamol 500mg
-</div>
-
-</div>
-
-<div class="sebelum" id="outSebelum">
-Harga Sebelum PPN : Rp10.000
-</div>
-
-<div class="sesudah" id="outSesudah">
-Rp11.100
-</div>
-
-<div class="ppn">
-(Sudah termasuk PPN 11%)
-</div>
-
-<div class="barcode">
-
-<svg id="barcode"></svg>
-
-</div>
+<div
+class="labels"
+id="labels">
 
 </div>
 
 <script>
 
-function rp(x){
+function rupiah(x){
+
 return x.toLocaleString('id-ID');
+
 }
 
-function buatCard(){
+function generateLabels(){
+
+let data=
+document.getElementById(
+'data'
+).value.trim();
+
+let rows=
+data.split('\n');
+
+let html='';
+
+rows.forEach((row,index)=>{
+
+let col=
+row.split('\t');
+
+if(col.length<3)return;
 
 let nama=
-document.getElementById('nama').value;
+col[0].trim();
 
 let harga=
 parseFloat(
-document.getElementById('harga').value
-)||0;
+col[1]
+.replace(/\./g,'')
+.replace(/,/g,'')
+);
 
 let sku=
-document.getElementById('sku').value;
+col[2].trim();
 
 let total=
-Math.round(harga*1.11);
+Math.round(
+harga*1.11
+);
+
+html+=`
+
+<div class="label">
+
+<div class="top">
+
+<img
+src="logo.png"
+class="logo">
+
+<div class="nama">
+
+${nama}
+
+</div>
+
+</div>
+
+<div class="sebelum">
+
+Harga Sebelum PPN
+Rp ${rupiah(harga)}
+
+</div>
+
+<div class="sesudah">
+
+Rp ${rupiah(total)}
+
+</div>
+
+<div class="barcode">
+
+<svg id="bc${index}"></svg>
+
+</div>
+
+</div>
+
+`;
+
+});
 
 document.getElementById(
-'outNama'
-).innerText=
-nama||"Nama Barang";
+'labels'
+).innerHTML=html;
 
-document.getElementById(
-'outSebelum'
-).innerText=
-"Harga Sebelum PPN : Rp "+rp(harga);
+rows.forEach((row,index)=>{
 
-document.getElementById(
-'outSesudah'
-).innerText=
-"Rp"+rp(total);
+let col=
+row.split('\t');
+
+if(col.length<3)return;
+
+let sku=
+col[2].trim();
 
 JsBarcode(
-"#barcode",
-sku||"EMPTY",
+`#bc${index}`,
+sku,
 {
 
 format:"CODE128",
 
-width:1.85,
+width:1.2,
 
-height:42,
+height:28,
 
 displayValue:true,
 
-fontSize:13,
+fontSize:8,
 
-textMargin:2,
-
-margin:0,
-
-lineColor:"#000"
+margin:0
 
 }
 
 );
 
-}
+});
 
-buatCard();
+}
 
 </script>
 
