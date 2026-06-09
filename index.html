@@ -2,8 +2,9 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Cito Apotek Batch Price Card</title>
+<title>Cito Apotek Batch Label</title>
 
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
@@ -14,48 +15,68 @@ box-sizing:border-box;
 }
 
 body{
-font-family:Arial,sans-serif;
+font-family:Segoe UI,Arial,sans-serif;
+background:#f2f2f2;
 margin:20px;
-background:#f5f5f5;
 }
 
 .panel{
 
-background:white;
+background:#fff;
 
 padding:20px;
 
 border-radius:15px;
 
-box-shadow:0 2px 10px rgba(0,0,0,.1);
+box-shadow:0 3px 12px rgba(0,0,0,.1);
 
 margin-bottom:20px;
 
+}
+
+h2{
+margin-top:0;
 }
 
 textarea{
 
 width:100%;
 
-height:250px;
+height:220px;
 
 padding:12px;
 
 font-family:Consolas,monospace;
 
+font-size:14px;
+
+border-radius:10px;
+
+border:1px solid #ccc;
+
+}
+
+.info{
+
+margin-top:10px;
+
+font-weight:bold;
+
+color:#0aa53f;
+
 }
 
 button{
 
-padding:12px 20px;
+padding:12px 18px;
 
 border:none;
+
+border-radius:10px;
 
 cursor:pointer;
 
 font-weight:bold;
-
-border-radius:8px;
 
 margin-top:10px;
 
@@ -64,22 +85,21 @@ margin-right:10px;
 }
 
 .generate{
-
 background:#0aa53f;
-
 color:white;
-
 }
 
 .print{
-
 background:#1565ff;
-
 color:white;
-
 }
 
-/* LABEL */
+.clear{
+background:#888;
+color:white;
+}
+
+/* LABEL AREA */
 
 .labels{
 
@@ -87,18 +107,20 @@ display:flex;
 
 flex-wrap:wrap;
 
-gap:0;
+gap:4px;
 
 }
+
+/* LABEL */
 
 .label{
 
 width:58mm;
 height:39mm;
 
-border:1px solid #ddd;
-
 background:white;
+
+border:1px solid #ddd;
 
 padding:2mm;
 
@@ -108,11 +130,13 @@ page-break-inside:avoid;
 
 }
 
+/* HEADER */
+
 .top{
 
 display:flex;
 
-align-items:center;
+align-items:flex-start;
 
 gap:4px;
 
@@ -133,47 +157,55 @@ flex-shrink:0;
 
 font-size:9pt;
 
-font-weight:bold;
+font-weight:900;
 
-line-height:1;
+line-height:1.05;
 
-height:8mm;
+height:9mm;
 
 overflow:hidden;
 
+display:-webkit-box;
+
+-webkit-line-clamp:2;
+
+-webkit-box-orient:vertical;
+
 }
+
+/* PRICE */
 
 .sebelum{
 
 font-size:6pt;
 
-color:#555;
+text-align:center;
+
+color:#666;
 
 margin-top:1mm;
-
-text-align:center;
 
 }
 
 .sesudah{
 
-font-size:16pt;
+font-size:15pt;
 
 font-weight:900;
+
+text-align:center;
 
 color:#ff7a00;
 
 line-height:1;
 
-text-align:center;
-
 margin-top:1mm;
 
 }
 
-.barcode{
+/* BARCODE */
 
-height:13mm;
+.barcode{
 
 display:flex;
 
@@ -181,17 +213,19 @@ justify-content:center;
 
 align-items:center;
 
-overflow:hidden;
+height:14mm;
 
 margin-top:1mm;
+
+overflow:hidden;
 
 }
 
 .barcode svg{
-
 max-width:100%;
-
 }
+
+/* PRINT */
 
 @media print{
 
@@ -225,11 +259,8 @@ page-break-after:always;
 }
 
 @page{
-
 size:58mm 39mm;
-
 margin:0;
-
 }
 
 </style>
@@ -239,86 +270,97 @@ margin:0;
 
 <div class="panel">
 
-<h2>Cito Apotek - Batch Label</h2>
+<h2>Cito Apotek - Batch Price Card</h2>
 
 <p>
-Paste dari Excel:
+Format:
 <br>
-Nama Barang | Harga Sebelum PPN | SKU
+Nama Barang;Harga Sebelum PPN;SKU
 </p>
 
 <textarea id="data"></textarea>
 
-<br>
+<div class="info" id="counter">
+Total Label : 0
+</div>
 
-<button
-class="generate"
-onclick="generateLabels()">
-
-GENERATE LABEL
-
+<button class="generate" onclick="generateLabels()">
+GENERATE
 </button>
 
-<button
-class="print"
-onclick="window.print()">
-
+<button class="print" onclick="window.print()">
 PRINT
+</button>
 
+<button class="clear" onclick="clearData()">
+CLEAR
 </button>
 
 </div>
 
-<div
-class="labels"
-id="labels">
-
-</div>
+<div class="labels" id="labels"></div>
 
 <script>
 
 function rupiah(x){
-
 return x.toLocaleString('id-ID');
+}
+
+function clearData(){
+
+document.getElementById('data').value='';
+
+document.getElementById('labels').innerHTML='';
+
+document.getElementById('counter').innerText=
+'Total Label : 0';
 
 }
 
 function generateLabels(){
 
-let data=
-document.getElementById(
-'data'
-).value.trim();
+const data=
+document.getElementById('data')
+.value
+.trim();
 
-let rows=
+if(!data){
+return;
+}
+
+const rows=
 data.split('\n');
 
 let html='';
 
+let totalLabel=0;
+
 rows.forEach((row,index)=>{
 
-let col=
-row.split('\t');
+if(!row.trim()) return;
 
-if(col.length<3)return;
+const col=
+row.split(';');
 
-let nama=
+if(col.length<3) return;
+
+const nama=
 col[0].trim();
 
-let harga=
+const harga=
 parseFloat(
 col[1]
 .replace(/\./g,'')
 .replace(/,/g,'')
 );
 
-let sku=
+const sku=
 col[2].trim();
 
-let total=
-Math.round(
-harga*1.11
-);
+if(!sku) return;
+
+const hargaPPN=
+Math.round(harga*1.11);
 
 html+=`
 
@@ -326,40 +368,31 @@ html+=`
 
 <div class="top">
 
-<img
-src="logo.png"
-class="logo">
+<img src="logo.png" class="logo">
 
 <div class="nama">
-
 ${nama}
-
 </div>
 
 </div>
 
 <div class="sebelum">
-
-Harga Sebelum PPN
-Rp ${rupiah(harga)}
-
+Harga Sebelum PPN : Rp ${rupiah(harga)}
 </div>
 
 <div class="sesudah">
-
-Rp ${rupiah(total)}
-
+Rp ${rupiah(hargaPPN)}
 </div>
 
 <div class="barcode">
-
 <svg id="bc${index}"></svg>
-
 </div>
 
 </div>
 
 `;
+
+totalLabel++;
 
 });
 
@@ -367,24 +400,30 @@ document.getElementById(
 'labels'
 ).innerHTML=html;
 
+document.getElementById(
+'counter'
+).innerText=
+'Total Label : ' + totalLabel;
+
 rows.forEach((row,index)=>{
 
-let col=
-row.split('\t');
+const col=
+row.split(';');
 
-if(col.length<3)return;
+if(col.length<3) return;
 
-let sku=
+const sku=
 col[2].trim();
+
+if(!sku) return;
 
 JsBarcode(
 `#bc${index}`,
 sku,
 {
-
 format:"CODE128",
 
-width:1.2,
+width:1.3,
 
 height:28,
 
@@ -392,10 +431,12 @@ displayValue:true,
 
 fontSize:8,
 
-margin:0
+textMargin:1,
 
+margin:0,
+
+lineColor:"#000"
 }
-
 );
 
 });
