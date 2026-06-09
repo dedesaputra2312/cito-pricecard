@@ -109,11 +109,15 @@ width:58mm;
 
 padding:2mm;
 
-border-bottom:1px dashed #ccc;
+border:1px solid #000;
+
+border-bottom:2px dashed #000;
 
 background:white;
 
 overflow:hidden;
+
+margin-bottom:1mm;
 
 }
 
@@ -142,13 +146,15 @@ flex-shrink:0;
 
 .nama{
 
-font-size:9pt;
+font-size:10pt;
 
-font-weight:bold;
+font-weight:900;
 
-line-height:1.1;
+line-height:1.05;
 
 word-break:break-word;
+
+color:#000;
 
 }
 
@@ -156,9 +162,11 @@ word-break:break-word;
 
 .sebelum{
 
-font-size:6pt;
+font-size:8pt;
 
-color:#666;
+font-weight:700;
+
+color:#000;
 
 text-align:center;
 
@@ -168,7 +176,7 @@ margin-top:1mm;
 
 .sesudah{
 
-font-size:16pt;
+font-size:20pt;
 
 font-weight:900;
 
@@ -202,7 +210,13 @@ max-width:100%;
 
 /* PRINT */
 
-@media print{
+@media print{*{
+
+color:#000 !important;
+
+background:#fff !important;
+
+}
 
 body{
 margin:0;
@@ -451,13 +465,15 @@ sku,
 
 format:"CODE128",
 
-width:1.3,
+width:1.8,
 
-height:30,
+height:36,
 
 displayValue:true,
 
-fontSize:10,
+fontSize:12,
+
+fontOptions:"bold",
 
 margin:0,
 
